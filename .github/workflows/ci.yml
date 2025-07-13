@@ -1,0 +1,39 @@
+name: my_ci_script
+on:
+    push:
+        branches:
+            - main
+
+env:
+    aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
+    aws_secret_key: ${{secrets.AWS_SECRET_ACCESS}}
+    aws_ssh_public_key: ${{secrets.AWS_SHH_PUBLIC}}
+    aws_ssh_private_key: ${{secrets.AWS_SSH_PRIVATE}}
+
+jobs:
+    deploy_infra:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - name: install-terraform
+              uses: actions/setup-terraform@v3
+              with:
+                terraform_wrapper: false
+            - name: terraform-init
+              id: init
+              run: terraform init
+              working-directory: ./terraform
+            - name: plan
+              id: plan
+              run: |
+               terraform plan \
+               -var="public_key=$aws_ssh_public_key" \
+               -var="private_key=$aws_ssh_private_key" \
+               -var="key_name=my_rayankey" 
+              working-directory: ./terraform
+            - name: apply
+              id: apply
+              run: terrform apply
+              working-directory: ./terraform
+            
