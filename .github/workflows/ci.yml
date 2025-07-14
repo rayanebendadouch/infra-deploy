@@ -9,7 +9,7 @@ env:
     AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS}}
     aws_ssh_public_key: ${{secrets.AWS_SHH_PUBLIC}}
     aws_ssh_private_key: ${{secrets.AWS_SSH_PRIVATE}}
-
+    AWS_REGION: us-east-1
 jobs:
     deploy_infra:
         runs-on: ubuntu-latest
