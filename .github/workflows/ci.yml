@@ -41,7 +41,7 @@ jobs:
               working-directory: ./terraform
             - name: set-output
               id: myoutput
-              run: echo "::set-output name=public_ip::$(terraform output instance_public_ip)"
+              run: echo "public_ip=$(terraform output instance_public_ip)" >> $GITHUB_OUTPUT
 
     deploy-app:
         runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
             - name: checkout
               uses: actions/checkout@v2
             - name: set_public_ip
-              run: echo ec2_public_ip=${{needs.deploy_infra.outputs.server_public_ip}} >> $GITHUB_ENV
+              run: echo "ec2_public_ip=${{needs.deploy_infra.outputs.server_public_ip}}" >> $GITHUB_ENV
             - name: login to aws ecr
               id: login-ecr
               uses: aws-actions/amazon-ecr-login@v2
@@ -71,7 +71,7 @@ jobs:
                 AWS_DEFAULT_REGION: us-east-1
               uses: appleboy/ssh-action@v1
               with:
-                host: ${{ env.ec2_public_ip}}
+                host: ${{env.ec2_public_ip}}
                 username: ubuntu
                 key: ${{env.aws_ssh_private_key}}
                 envs:  aws_ssh_private_key, AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_DEFAULT_REGION
