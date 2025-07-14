@@ -1,14 +1,14 @@
 terraform{
    required_providers{
  aws = {
-    source="hachicorp/aws"
+    source="hashicorp/aws"
     version="~>5.0"
  }
    }
    backend "s3" {
-    bucket="my-terr-bucket"
+    bucket="my-rayanterr-bucket"
     key="myapp/file.tfstate"
-    region=var.region
+    region="us-east-1"
      
    }
     
@@ -20,11 +20,11 @@ provider "aws" {
 
 resource "aws_instance" "fisrt-inst"{
 
-    ami="ami-0a7d80731ae1b2435 (64-bit (x86))"
+    ami="ami-0a7d80731ae1b2435"
     instance_type="t2.micro"
-    key_name=aws_key_pair.key_name
+    key_name=aws_key_pair.my-key.key_name
     iam_instance_profile=aws_iam_instance_profile.profile.name
-    vpc_security_group_ids=[aws_security_group.id]
+    vpc_security_group_ids=[aws_security_group.my-rules.id]
     connection {
       type="ssh"
       host = self.public_ip
@@ -48,15 +48,15 @@ resource "aws_security_group" "my-rules" {
 
 resource "aws_vpc_security_group_ingress_rule" "inbound-rules" {
     security_group_id=aws_security_group.my-rules.id
-    cidr_block=["0.0.0.0/0"]
+    cidr_ipv4="0.0.0.0/0"
     from_port=22
     ip_protocol="tcp"
     to_port=22
 
 }
-resource "aws_vpc_security_group_ingress_rule" "inbound-rules" {
+resource "aws_vpc_security_group_ingress_rule" "inbound-rules2" {
     security_group_id=aws_security_group.my-rules.id
-    cidr_block=["0.0.0.0/0"]
+    cidr_ipv4="0.0.0.0/0"
     from_port=80
     ip_protocol="tcp"
     to_port=80
@@ -64,10 +64,9 @@ resource "aws_vpc_security_group_ingress_rule" "inbound-rules" {
 }
 resource "aws_vpc_security_group_egress_rule" "inbound-rules" {
     security_group_id=aws_security_group.my-rules.id
-    cidr_block=["0.0.0.0/0"]
-    from_port=0
+    cidr_ipv4="0.0.0.0/0"
     ip_protocol="-1"
-    to_port=0
+    
 
 }
 resource "aws_key_pair" "my-key" {
